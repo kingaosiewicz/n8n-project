@@ -58,4 +58,4 @@ Workflow zawiera wbudowane dane testowe – wystarczy kliknąć **"Execute workf
 
 ---
 
-📁 Plik źródłowy workflowa: `My workflow 2.json`
+Plik źródłowy workflowa: `My workflow 2.json`
