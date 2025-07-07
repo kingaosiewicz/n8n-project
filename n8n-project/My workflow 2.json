@@ -1,0 +1,185 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        100
+      ],
+      "id": "dbd23c24-3809-4c49-9101-005e49022c69",
+      "name": "Uruchom raport"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"errors\": [\n    { \"data\": \"2025-07-07\", \"linia\": \"B\", \"typ_błędu\": \"Błąd jakości\", \"czas\": \"08:30\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -500,
+        100
+      ],
+      "id": "984de921-179f-4376-b18a-1f1142eaed53",
+      "name": "Dane testowe"
+    },
+    {
+      "parameters": {
+        "fromEmail": "example@example.com",
+        "toEmail": "recipient@example.com",
+        "subject": "=Raport dzienny błędów z {{ new Date().toLocaleDateString() }}",
+        "html": "=Nie znaleziono żadnych błędów. Wszystko działa poprawnie! ✅",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        220
+      ],
+      "id": "71a947b6-6563-4a63-9055-c8f7fef26f42",
+      "name": "Mail bez błędów",
+      "webhookId": "6aa0c978-4c30-4292-b449-3d8785b55424",
+      "credentials": {
+        "smtp": {
+          "id": "6LUE6AsXGQ1O7IsU",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "example@example.com",
+        "toEmail": "recipient@example.com",
+        "subject": "=Raport dzienny błędów z {{ new Date().toLocaleDateString() }}",
+        "html": "=Raport błędów na dzień {{ $json.errors[0].data }}:\n\nLinia: {{ $json.errors[0].linia }}, Typ: {{ $json.errors[0]['typ_błędu'] }}, Czas: {{ $json.errors[0].czas }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ffe77d5e-a274-4e4f-b0ea-62a7513b5df0",
+      "name": "Mail z błędami",
+      "webhookId": "6aa0c978-4c30-4292-b449-3d8785b55424",
+      "credentials": {
+        "smtp": {
+          "id": "6LUE6AsXGQ1O7IsU",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1fdd50a-8f8b-40be-bce0-b06d43d7409c",
+              "leftValue": "={{ $json.errors[0].data }}",
+              "rightValue": "={{ $now}}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "bad96003-19f4-40d0-aea5-6e8b115a9160",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "861bacc4-ea57-4206-af31-2d9d639eadd0",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        100
+      ],
+      "id": "e55f68ca-206f-418e-a927-352df5655426",
+      "name": "Czy data błędu jest taka sama jak dzisiejsza data?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Uruchom raport": {
+      "main": [
+        [
+          {
+            "node": "Dane testowe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dane testowe": {
+      "main": [
+        [
+          {
+            "node": "Czy data błędu jest taka sama jak dzisiejsza data?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Czy data błędu jest taka sama jak dzisiejsza data?": {
+      "main": [
+        [
+          {
+            "node": "Mail z błędami",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mail bez błędów",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e917a43a-51cd-4172-8535-50bb7dcadbfc",
+  "meta": {
+    "instanceId": "788130c6fd1d8478bd690e63f3268493b30f4f6c45d520195e6102860ee97f45"
+  },
+  "id": "KyrqkZ8RLZmctdI4",
+  "tags": []
+}
